@@ -40,16 +40,7 @@ to reproduce  ;; person procedure
   ]
 end
 </pre>
-Додано нову процедуру для оновлення power-plant-influence у кожному такті
-<pre>
-to update-power-plant-influence
-  ask patches with [power-plant? = true] [
-    ask neighbors [
-      set power-plant-influence power-plant-influence + 0.1
-    ]
-  ]
-end
-</pre>
+
 Додана властивість power-plant-influence для клітин, щоб відслідковувати вплив електростанцій на них. Електростанції тепер впливають на сусідні клітинах, збільшуючи вірогідність висадки дерев та народження нових людей.
 
 
