@@ -48,30 +48,39 @@ end
 ![Скріншот моделі в процесі симуляції](influence.png)
 
 ### Внесені зміни у вихідну логіку моделі, на власний розсуд:
-Додано новий атрибут клітин clean-energy для відображення наявності чистої енергії і її впливу на народжуваність.
+Розглянемо вплив вітру на росповсюдження зараження. Додано новий атрибут wind-speed, wind-direction.
 
 <pre>
 patches-own [
-  clean-energy
+  wind-speed
+  wind-direction
 ]
 </pre>
-Додано новий метод для симуляції ефекту чистої енергії на народжуваність:
+Додано новий метод для симуляції вітру:
 <pre>
-to update-clean-energy-effect
-  ask patches with [clean-energy > 0] [
-    ask neighbors [
-      set birth-rate birth-rate + (clean-energy * 0.001)
-    ]
+to move  ;; wind-path procedure
+  rt random-float 30 - random-float 30
+  fd wind-speed
+  if pcolor = red [ set color blue - 2 ]
+end
+</pre>
+Зменшимо еффект зараження зі збільшенням щвидкості вітру:
+<pre>
+
+to pollute  ;; patch procedure
+  if is-power-plant? [
+    set pcolor red
+    set pollution polluting-rate
   ]
+  
+ if pollution > 0 [
+    set pollution pollution - (pollution * wind-speed / 100)
+  ]
+
+  set pcolor scale-color red (pollution - .1) 5 0
 end
 </pre>
-Велючено новий метод до головного циклу моделі:
-<pre>
-to go
-  update-clean-energy-effect
-end
-</pre>
-Експеримент демонструє, що чиста енергія може мати позитивний вплив на демографічні показники в симульованому середовищі. Це відкриває можливості для додаткових досліджень щодо взаємозв'язку між екологічними умовами та демографічною динамікою, а також розробки стратегій збільшення народжуваності через покращення екологічних умов.
+
 ![Скріншот моделі в процесі симуляції](clean-energy.png)
 Фінальний код моделі та її інтерфейс доступні за [посиланням](model.nlogo). *// якщо вносили зміни до інтерфейсу середовища моделювання - то експорт потрібен у форматі nlogo, як тут. Інакше, якщо змінювався лише код логіки моделі, достатньо викласти лише його, як [тут](model-code.html),якщо експортовано з десктопної версії NetLogo, або окремим текстовим файлом, шляхом копіпасту з веб-версії*.
 <br>
